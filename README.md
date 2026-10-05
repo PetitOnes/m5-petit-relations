@@ -33,6 +33,8 @@ uv sync
 | `PETIT_DATA_DIR` | `~/petit_data` | データディレクトリ(他のm5-petitコンポーネントと共有) |
 | `CHARACTERS_DIR` | `$PETIT_DATA_DIR/characters` | キャラクターディレクトリのパス(他のキャラのrelationsを読むために使う) |
 | `RELATIONS_PATH` | `$CHARACTERS_DIR/<CHARACTER_ID>/data/relations.json` | 自分のrelations.jsonのパス |
+| `OWNER_ID` | `owner` | 人間のオーナーを指すid(道具の説明文に入る。既にあるrelations.jsonのキーに合わせる) |
+| `OWNER_NAME` | `人間のオーナー` | オーナーの呼び名(道具の説明文に入る) |
 
 ## Claude Code連携
 
