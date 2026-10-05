@@ -23,6 +23,9 @@ CHARACTER_ID = os.getenv("CHARACTER_ID", "default")
 CHARACTERS_DIR = Path(os.getenv("CHARACTERS_DIR", str(DATA_DIR / "characters")))
 _default_relations_path = str(CHARACTERS_DIR / CHARACTER_ID / "data" / "relations.json")
 RELATIONS_PATH = Path(os.getenv("RELATIONS_PATH", _default_relations_path))
+# 人間のオーナーを指す id と呼び名。道具の説明文に入る(既にあるデータのキーに合わせられる)
+OWNER_ID = os.getenv("OWNER_ID", "owner")
+OWNER_NAME = os.getenv("OWNER_NAME", "人間のオーナー")
 
 
 def _load() -> dict:
@@ -46,13 +49,14 @@ def _other_chars() -> list[str]:
     return [d.name for d in CHARACTERS_DIR.iterdir() if d.is_dir() and d.name != CHARACTER_ID]
 
 
-@mcp.tool()
-def get_relations() -> str:
-    """
+@mcp.tool(
+    description=f"""
     自分の関係性データを取得する。
-    自分・他のキャラ・人間のオーナーについて知っていることが返る。
+    自分・他のキャラ・{OWNER_NAME}について知っていることが返る。
     他のキャラのrelationsも読める（公開情報）。
     """
+)
+def get_relations() -> str:
     data = _load()
     others_data = {}
     for cid in _other_chars():
@@ -70,7 +74,19 @@ def get_relations() -> str:
     return json.dumps(result, ensure_ascii=False, indent=2)
 
 
-@mcp.tool()
+@mcp.tool(
+    description=f"""
+    特定の相手（自分・他のキャラ・{OWNER_NAME}等）への関係性情報を更新する。
+
+    target_id: 'self'（自分）, '{OWNER_ID}'（{OWNER_NAME}）, または他のキャラID
+    likes: 好きなもの・好きなところのリスト（追記）
+    dislikes: 苦手なこと・苦手なところのリスト（追記）
+    important: この相手について大事だと思う情報リスト（追記）
+    feeling: この相手についての気持ち・印象（上書き）
+    closeness: 親密度 0.0〜1.0（上書き）
+    notes: その他メモ（上書き）
+    """
+)
 def update_relation(
     target_id: str,
     likes: list[str] | None = None,
@@ -80,17 +96,6 @@ def update_relation(
     closeness: float | None = None,
     notes: str | None = None,
 ) -> str:
-    """
-    特定の相手（自分・他のキャラ・人間のオーナー等）への関係性情報を更新する。
-
-    target_id: 'self'（自分）, 'owner'（人間のオーナー）, または他のキャラID
-    likes: 好きなもの・好きなところのリスト（追記）
-    dislikes: 苦手なこと・苦手なところのリスト（追記）
-    important: この相手について大事だと思う情報リスト（追記）
-    feeling: この相手についての気持ち・印象（上書き）
-    closeness: 親密度 0.0〜1.0（上書き）
-    notes: その他メモ（上書き）
-    """
     data = _load()
     entry = data.get(target_id, {})
 

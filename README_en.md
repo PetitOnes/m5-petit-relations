@@ -33,6 +33,8 @@ uv sync
 | `PETIT_DATA_DIR` | `~/petit_data` | Data directory (shared with other m5-petit components) |
 | `CHARACTERS_DIR` | `$PETIT_DATA_DIR/characters` | Path to the characters directory (used to read other characters' relations) |
 | `RELATIONS_PATH` | `$CHARACTERS_DIR/<CHARACTER_ID>/data/relations.json` | Path to this character's own relations.json |
+| `OWNER_ID` | `owner` | The id used for the human owner in tool descriptions (match the key already used in your relations.json) |
+| `OWNER_NAME` | `人間のオーナー` | How the owner is called in tool descriptions |
 
 ## Claude Code integration
 
