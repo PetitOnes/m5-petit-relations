@@ -75,6 +75,8 @@ uv sync
 
 `target_id`には`self`(自分)・`owner`(人間のオーナー)・他のキャラIDを指定できます。
 
+書きかえると、その相手の`updated_at`(いつ書きかえたか)が、いまの時刻になります(`clear_relation_field`でも)。
+
 ### clear_relation_field
 
 特定の相手の特定フィールド(`likes`・`dislikes`・`important`・`feeling`・`closeness`・`notes`)をクリアします。
@@ -95,7 +97,8 @@ uv sync
     "important": ["誕生日は2月"],
     "feeling": "一緒にいると安心する",
     "closeness": 0.8,
-    "notes": ""
+    "notes": "",
+    "updated_at": "2026-11-14T10:00:00+09:00"
   }
 }
 ```
