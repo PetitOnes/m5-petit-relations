@@ -75,6 +75,8 @@ Updates relationship info for a specific counterpart. `likes`, `dislikes`, and `
 
 `target_id` can be `self`, `owner` (the human owner), or another character's ID.
 
+Each write stamps that counterpart's `updated_at` (when it was last changed, ISO 8601 local time). `clear_relation_field` does too.
+
 ### clear_relation_field
 
 Clears a specific field (`likes`, `dislikes`, `important`, `feeling`, `closeness`, `notes`) for a specific counterpart.

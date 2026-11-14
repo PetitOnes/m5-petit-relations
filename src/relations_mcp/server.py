@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import os
+from datetime import datetime
 from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
@@ -40,6 +41,11 @@ def _load() -> dict:
 def _save(data: dict) -> None:
     RELATIONS_PATH.parent.mkdir(parents=True, exist_ok=True)
     RELATIONS_PATH.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def _now() -> str:
+    """いまの時刻(その家の時計で、秒まで)。相手ごとの updated_at に入れる"""
+    return datetime.now().astimezone().isoformat(timespec="seconds")
 
 
 def _other_chars() -> list[str]:
@@ -85,6 +91,8 @@ def get_relations() -> str:
     feeling: この相手についての気持ち・印象（上書き）
     closeness: 親密度 0.0〜1.0（上書き）
     notes: その他メモ（上書き）
+
+    書きかえると、その相手の updated_at(いつ書きかえたか)が、いまの時刻になる。
     """
 )
 def update_relation(
@@ -115,6 +123,11 @@ def update_relation(
     if notes is not None:
         entry["notes"] = notes
 
+    overwrote = any(v is not None for v in (feeling, closeness, notes))
+    changed = overwrote or bool(likes or dislikes or important)
+    if changed:   # 何も渡さなかった呼び出しでは、時刻を動かさない
+        entry["updated_at"] = _now()
+
     data[target_id] = entry
     _save(data)
     return f"updated relation for '{target_id}': {json.dumps(entry, ensure_ascii=False)}"
@@ -128,8 +141,11 @@ def clear_relation_field(target_id: str, field: str) -> str:
     """
     data = _load()
     entry = data.get(target_id, {})
+    if field == "updated_at":
+        return "'updated_at' は消せません(書きかえた時刻の記録です)"
     if field in entry:
         del entry[field]
+        entry["updated_at"] = _now()
         data[target_id] = entry
         _save(data)
         return f"cleared '{field}' for '{target_id}'"
